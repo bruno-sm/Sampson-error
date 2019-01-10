@@ -89,8 +89,8 @@ def build_complete_dlt_matrix(pts1, pts2):
 # Los puntos tienen dimensión 2, suponiendo que su componente homogenea es 1
 def build_dlt_matrix(pt1, pt2):
     A = np.matrix([
-        [pt1[0], pt1[1], 1, 0, 0, 0, -pt2[0]*pt1[0], -pt2[0]*pt1[1], -pt2[0]],
-        [0, 0, 0, pt1[0], pt1[1], 1, -pt2[1]*pt1[0], -pt2[1]*pt1[1], -pt2[1]]
+        [0, 0, 0, -pt1[0], -pt1[1], -1, pt2[1]*pt1[0], pt2[1]*pt1[1], pt2[1]],
+        [pt1[0], pt1[1], 1, 0, 0, 0, -pt2[0]*pt1[0], -pt2[0]*pt1[1], -pt2[0]]
         ])
 
     return A
