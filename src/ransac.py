@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 import functools
 
 
+# Calcula una homografía entre varias correspondencias (los puntos de pts1 van en correspondencia con los de pts2) 
 def find_homography_with_ransac(pts1, pts2):
     # Pasamos los puntos a coordenadas homogeneas
     pts1 = [[p[0], p[1], 1.0] for p in pts1]
@@ -34,12 +35,9 @@ def find_homography_with_ransac(pts1, pts2):
         inliers1 = []
         inliers2 = []
         for j in range(0, len(pts1)):
+            # Calculamos la transformación del punto con la homografía obtenida
             trans_pt = H_aux * np.matrix(pts1[j]).transpose()
             trans_pt = np.asarray(trans_pt.transpose())[0]
-            print("orig")
-            print(pts1[j])
-            print("trans")
-            print(trans_pt)
             # Pasamos el punto transformado a coordenadas homogeneas
             trans_pt = trans_pt * (1/trans_pt[2])
             #print(np.linalg.norm(pts2[j] - trans_pt))
@@ -65,23 +63,12 @@ def dlt(pts1, pts2):
     # Descomposición de A en valores singulares para obtener los vectores propios de A^T * A
     u, s, v = np.linalg.svd(A)
 
-    print("u:")
-    print(u)
-    print("s:")
-    print(s)
-    print("v^t:")
-    print(v.transpose())
-    print("v:")
-    print(v)
-
     # Nos quedamos con el vector propio con menor valor singular 
     h = v[-1::][0]
     # Normalizamos el vector
     h = h * (1/np.linalg.norm(h))
     # Lo ponemos en forma de matriz 3x3
     h = np.reshape(h, (3, 3))
-    print("h:")
-    print(h)
     return h 
 
 
@@ -95,7 +82,6 @@ def build_complete_dlt_matrix(pts1, pts2):
         A[j] = A_i[0]
         A[j+1] = A_i[1]
 
-    print(A)
     return A
 
 
@@ -106,9 +92,5 @@ def build_dlt_matrix(pt1, pt2):
         [pt1[0], pt1[1], 1, 0, 0, 0, -pt2[0]*pt1[0], -pt2[0]*pt1[1], -pt2[0]],
         [0, 0, 0, pt1[0], pt1[1], 1, -pt2[1]*pt1[0], -pt2[1]*pt1[1], -pt2[1]]
         ])
-#    A = np.matrix([
-#        [0, 0, 0, -pt1[0], -pt1[1], -1, pt2[1]*pt1[0], pt2[1]*pt1[1], pt2[1]],
-#        [pt1[0], pt1[1], 1, 0, 0, 0, -pt2[0]*pt1[0], -pt2[0]*pt1[1], -pt2[0]]
-#        ])
 
     return A
