@@ -7,7 +7,6 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon, QPixmap, QImage
 from PyQt5.QtCore import Qt, QSize, pyqtSignal, pyqtSlot, QRectF
-from newton import find_homography_with_newton
 from gauss_newton import find_homography_with_gauss_newton
 from iterative import *
 
@@ -72,10 +71,9 @@ class Window(QMainWindow):
         centralWidget = QWidget(self)          
         self.setCentralWidget(centralWidget)   
 
-        self.algorithm = find_homography_with_newton 
+        self.algorithm = find_homography_with_gauss_newton 
         self.algorithmCombo = QComboBox(self)
         self.algorithmCombo.setObjectName(("algorithmComboBox"))
-        self.algorithmCombo.addItem("Newton")
         self.algorithmCombo.addItem("Gauss-Newton")
         self.algorithmCombo.addItem("LM")
         self.algorithmCombo.activated[str].connect(self.changedAlgorithm)
@@ -110,9 +108,7 @@ class Window(QMainWindow):
 
     @pyqtSlot(str)
     def changedAlgorithm(self, name):
-        if name == "Newton":
-            self.algorithm = find_homography_with_newton 
-        elif name == "Gauss-Newton":
+        if name == "Gauss-Newton":
             self.algorithm = find_homography_with_gauss_newton 
         elif name == "LM":
             self.algorithm = lambda pts1, pts2: LM_fSampson(pts1, pts2, 10, 50)
@@ -126,8 +122,8 @@ class Window(QMainWindow):
 
         imgs = [i2a.rgb_view(QImage(url)) for url in self.pictureList.urlList]
 
-        h = int(imgs[0].shape[0] * 1.5) 
-        w = int(imgs[0].shape[1] * 2.3) 
+        h = int(imgs[0].shape[0] * 3) 
+        w = int(imgs[0].shape[1] * 5) 
         canvas = np.zeros((w, h, 3), dtype=np.uint8)
         mosaic = i2a.array2qimage(stitch_images(imgs, canvas, self.algorithm))
         self.pictureViewer.setPixmap(QPixmap.fromImage(mosaic))

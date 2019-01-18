@@ -14,14 +14,9 @@ def find_homography_with_gauss_newton(pts1, pts2):
     Δ = np.zeros((1,1)) + np.inf
     while np.mean(Δ) > 0:
         J = np.matrix([partial_derivative(lambda v: f(np.matrix(v)), np.asarray(P.T)[0], i) for i in range(len(P))]) 
-        # Resuelve -J^TJΔ = J^Tε
-        try:
-            Δ = np.linalg.solve(-J.T * J, J.T * ε)
-        except np.linalg.linalg.LinAlgError:
-            Δ = np.linalg.lstsq(-J.T * J, J.T * ε)[0]
-
+        Δ = -np.linalg.pinv(J) * ε
         P = P + Δ
         ε = np.matrix([f(P)]) 
 #        print("Error: {}".format(ε))
 
-    return np.reshape(P, (3, 3)), ε
+    return np.reshape(P, (3, 3)), ε[0,0]
