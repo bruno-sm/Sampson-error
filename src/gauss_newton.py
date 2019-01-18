@@ -24,4 +24,4 @@ def find_homography_with_gauss_newton(pts1, pts2):
         ε = np.matrix([f(P)]) 
 #        print("Error: {}".format(ε))
 
-    return np.reshape(P, (3, 3)), ε
+    return np.reshape(P, (3, 3)), ε[0,0]
