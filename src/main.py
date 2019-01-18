@@ -6,7 +6,7 @@ import time
 
 
 def main():
-    imgs = [cv2.imread("imagenes/" + name, 1) for name in ["mosaico002.JPG", "mosaico003.JPG", "mosaico004.JPG"]]
+    imgs = [cv2.imread("imagenes/" + name, 1) for name in ["mosaico002.jpg", "mosaico003.jpg", "mosaico004.jpg"]]
 
     # Crea una imagen en negro de tamaño suficiente
     h = int(imgs[0].shape[0] * 3) 
@@ -35,13 +35,13 @@ def stitch_images(imgs, canvas, homography_estimator):
     H = traslation_to_center
     # Calculamos el mosaico desde la imagen central hacia la izquierda
     for i in reversed(range(central_idx)):
-        H = H * ejercicio3_b(imgs[i], imgs[i+1], homography_estimator)
+        H = H * homography_between_images(imgs[i], imgs[i+1], homography_estimator)
         canvas = cv2.warpPerspective(imgs[i], H, canvas_size, canvas, borderMode=cv2.BORDER_TRANSPARENT)
 
     H = traslation_to_center
     # Calculamos el mosaico desde la imagen central hacia la derecha
     for i in range(central_idx+1, len(imgs)):
-        H = H * ejercicio3_b(imgs[i], imgs[i-1], homography_estimator)
+        H = H * homography_between_images(imgs[i], imgs[i-1], homography_estimator)
         canvas = cv2.warpPerspective(imgs[i], H, canvas_size, canvas, borderMode=cv2.BORDER_TRANSPARENT)
 
     #Eliminamos los bordes sobrantes 
@@ -53,14 +53,14 @@ def stitch_images(imgs, canvas, homography_estimator):
     return canvas[y:y+h,x:x+w]
 
 
-def ejercicio3_b(img1, img2, homography_estimator):
+def homography_between_images(img1, img2, homography_estimator):
     # Obtenemos los key points y sus descriptores
     kp1, des1 = sift_kps_and_descriptors(img1)
     kp2, des2 = sift_kps_and_descriptors(img2)
 
     # Emparejamos por Lowe
     matches = lowe_matches(kp1, kp2, des1, des2)
-    if len(matches) > 4:
+    if len(matches) >= 4:
         match_idx = [(m[0].trainIdx, m[0].queryIdx) for m in matches]
         pts1 = np.float32([kp1[i].pt for (_, i) in match_idx])
         pts2 = np.float32([kp2[i].pt for (i, _) in match_idx])
@@ -72,7 +72,7 @@ def ejercicio3_b(img1, img2, homography_estimator):
         print("Tiempo: " + str(t2-t1))
         return H
 
-    raise "Ejercicio 3.b: No hay suficientes matches para calcular la homografía"
+    raise "Error: No hay suficientes matches para calcular la homografía"
 
 
 def sift_kps_and_descriptors(img):

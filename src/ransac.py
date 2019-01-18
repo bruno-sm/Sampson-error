@@ -23,7 +23,6 @@ def find_homography_with_ransac(pts1, pts2):
     v = 0.6 # Probabilidad a priori de que un punto sea un outlier
     N = int(np.log(1-p) / np.log(1 - pow(1 - v, m)))
 
-    print("Iteraciones de RANSAC: {}".format(N))
     i = 0
     while i < N:
         # Resuelve la homografía con el mínimo número de puntos requeridos (m=4) escogidos al azar
@@ -47,7 +46,6 @@ def find_homography_with_ransac(pts1, pts2):
                 inliers2.append(pts2[j])
 
         inliers_prop = len(inliers1)/len(pts1)
-        print("Proporción de inliers iteración {}: {}".format(i, inliers_prop))
 
         # Reestimamos la proporción de outliers
         v = min(v, 1 - inliers_prop)
@@ -63,8 +61,10 @@ def find_homography_with_ransac(pts1, pts2):
             max_inliers_prop = inliers_prop
 
         # Recalculamos N para la proporción de outliers estimada
-        N = int(np.log(1-p) / np.log(1 - pow(1 - v, m)))
-        print("Iteraciones de RANSAC recalculadas: {}".format(N))
+        if v > 0.0:
+            N = int(np.log(1-p) / np.log(1 - pow(1 - v, m)))
+        else:
+            N = 0
         i = i + 1
 
     return H
