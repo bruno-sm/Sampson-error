@@ -132,7 +132,6 @@ def LM_fSampson(x1,x2,topeIter,topePasosSinIncremento):
     iter = 1
     pasos_sin_incremento = 0
     while((iter < topeIter) and (pasos_sin_incremento < topePasosSinIncremento)):
-        print("ITEEER: " + str(iter))
         J = np.matrix([ partial_derivative(f, np.asarray(P), i) for i in range(len(P)) ]) 
         JT = np.transpose(J)
         JTJ = np.dot(JT,J)
@@ -143,7 +142,6 @@ def LM_fSampson(x1,x2,topeIter,topePasosSinIncremento):
         
         incremento = False
         while(not incremento and (pasos_sin_incremento < topePasosSinIncremento)):
-            print(pasos_sin_incremento)
             try:
                 Delta = np.linalg.solve(JTJ + Lambda*I, -e*JT)
                 Delta = np.asarray(Delta).reshape(-1)
@@ -166,29 +164,30 @@ def LM_fSampson(x1,x2,topeIter,topePasosSinIncremento):
     
     return np.reshape(P,(3,3))
 
-
+"""
 # LM con e = función de coste.
 def LM_eSampson(x1,x2,topeIter,topePasosSinIncremento):
     H = find_homography_with_ransac(x1, x2)
     P = np.asarray(H).reshape(-1)
-    # Suponemos x1 en 3D
-    # f = H*x1
-    f = [ np.reshape(P,(3,3)) * x1[i]  for i in range(len(x1)) ]
+    
     iter = 1
     pasos_sin_incremento = 0
     while((iter < topeIter) and (pasos_sin_incremento < topePasosSinIncremento)):
-        print("ITEEER: " + str(iter))
+        print("ITEEEEER: " + str(iter))
+        # f = H*x1
+        x1_3d = [ np.append(x1[i],1)  for i in range(len(x1)) ]
+        #f = lambda P : [ np.reshape(P,(3,3)) * x1_3d[i] for i in range(len(x1)) ]
+        f = [ np.reshape(P,(3,3)) * x1_3d[i] for i in range(len(x1)) ]
         J = np.matrix([ partial_derivative(f, np.asarray(P), i) for i in range(len(P)) ]) 
         JT = np.transpose(J)
         JTJ = np.dot(JT,J)
         I = np.identity(9)
-        e = f(P)
+        e = sampson_error(x1,x2,np.reshape(P,(3,3)))
         if(iter == 1):
             Lambda = 10**(-3) * np.average( np.diagonal(JTJ) )
         
         incremento = False
         while(not incremento and (pasos_sin_incremento < topePasosSinIncremento)):
-            print(pasos_sin_incremento)
             try:
                 Delta = np.linalg.solve(JTJ + Lambda*I, -e*JT)
                 Delta = np.asarray(Delta).reshape(-1)
@@ -197,7 +196,7 @@ def LM_eSampson(x1,x2,topeIter,topePasosSinIncremento):
                 return(-1)
             
             P_nuevo = np.asarray(P) + np.asarray(Delta)
-            e_nuevo = f(P_nuevo)
+            e_nuevo = sampson_error(x1,x2,np.reshape(P,(3,3)))
             if(e_nuevo < e):
                 incremento = True
                 pasos_sin_incremento = 0
@@ -210,3 +209,4 @@ def LM_eSampson(x1,x2,topeIter,topePasosSinIncremento):
         iter = iter +1
     
     return np.reshape(P,(3,3))
+"""
