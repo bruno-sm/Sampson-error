@@ -9,8 +9,8 @@ def main():
     imgs = [cv2.imread("imagenes/" + name, 1) for name in ["yosemite1.jpg", "yosemite2.jpg", "yosemite3.jpg"]]
 
     # Crea una imagen en negro de tamaño suficiente
-    h = int(imgs[0].shape[0] * 1.5) 
-    w = int(imgs[0].shape[1] * 2.3) 
+    h = int(imgs[0].shape[0] * 3) 
+    w = int(imgs[0].shape[1] * 5) 
     canvas = np.zeros((w, h, 3), dtype=np.uint8)
 
     show_img((stitch_images(imgs, canvas, find_homography_with_gauss_newton), "Mosaico"))
@@ -45,7 +45,13 @@ def stitch_images(imgs, canvas, homography_estimator):
         H = H * ejercicio3_b(imgs[i], imgs[i-1], homography_estimator)
         canvas = cv2.warpPerspective(imgs[i], H, canvas_size, canvas, borderMode=cv2.BORDER_TRANSPARENT)
 
-    return canvas
+    #Eliminamos los bordes sobrantes 
+    gray = cv2.cvtColor(canvas,cv2.COLOR_BGR2GRAY)
+    _,thresh = cv2.threshold(gray,1,255,cv2.THRESH_BINARY)
+    _,contours,hierarchy = cv2.findContours(thresh,cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
+    cnt = contours[0]
+    x,y,w,h = cv2.boundingRect(cnt)
+    return canvas[y:y+h,x:x+w]
 
 
 def ejercicio3_b(img1, img2, homography_estimator):

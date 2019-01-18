@@ -122,8 +122,8 @@ class Window(QMainWindow):
 
         imgs = [i2a.rgb_view(QImage(url)) for url in self.pictureList.urlList]
 
-        h = int(imgs[0].shape[0] * 1.5) 
-        w = int(imgs[0].shape[1] * 2.3) 
+        h = int(imgs[0].shape[0] * 3) 
+        w = int(imgs[0].shape[1] * 5) 
         canvas = np.zeros((w, h, 3), dtype=np.uint8)
         mosaic = i2a.array2qimage(stitch_images(imgs, canvas, self.algorithm))
         self.pictureViewer.setPixmap(QPixmap.fromImage(mosaic))
