@@ -9,7 +9,7 @@ from PyQt5.QtGui import QIcon, QPixmap, QImage
 from PyQt5.QtCore import Qt, QSize, pyqtSignal, pyqtSlot, QRectF
 from newton import find_homography_with_newton
 from gauss_newton import find_homography_with_gauss_newton
-
+from iterative import *
 
 
 class DragDropListWidget(QListWidget):
@@ -77,6 +77,7 @@ class Window(QMainWindow):
         self.algorithmCombo.setObjectName(("algorithmComboBox"))
         self.algorithmCombo.addItem("Newton")
         self.algorithmCombo.addItem("Gauss-Newton")
+        self.algorithmCombo.addItem("LM")
         self.algorithmCombo.activated[str].connect(self.changedAlgorithm)
 
         self.pictureList = DragDropListWidget(self)
@@ -113,6 +114,8 @@ class Window(QMainWindow):
             self.algorithm = find_homography_with_newton 
         elif name == "Gauss-Newton":
             self.algorithm = find_homography_with_gauss_newton 
+        elif name == "LM":
+            self.algorithm = lambda pts1, pts2: LM_fSampson(pts1, pts2, 10, 50)
 
         self.show_mosaic()
 
