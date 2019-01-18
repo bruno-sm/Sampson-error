@@ -108,7 +108,7 @@ class Window(QMainWindow):
 
     @pyqtSlot(str)
     def changedAlgorithm(self, name):
-        elif name == "Gauss-Newton":
+        if name == "Gauss-Newton":
             self.algorithm = find_homography_with_gauss_newton 
         elif name == "LM":
             self.algorithm = lambda pts1, pts2: LM_fSampson(pts1, pts2, 10, 50)
