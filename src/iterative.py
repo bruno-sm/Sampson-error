@@ -1,3 +1,5 @@
+from sampson import *
+
 # -*- coding: utf-8 -*-
 """
 Created on Thu Jan 17 05:02:50 2019
@@ -118,3 +120,23 @@ J:
     J es la Jacobiana (df/dP). Matriz 1x9
 
 """
+
+# LM con f = función de coste.
+def LM(x1,x2,H):
+    P = np.asarray(H).reshape(-1)
+    m,n = mgrid[1:3:0.5,1:3:0.5]
+    f_mnH = sampson_error(m,n,H)
+    J = np.gradient(f_mnH)  # ¿Por qué va a salir 9 elementos?
+    JT = np.transpose(J)
+    JTJ = np.dot(JT,J)
+    Lambda = 10^(-3) * np.average( np.diagonal(JTJ) )
+    I = np.identity(3)
+    e = sampson_error(P,P,H) # f(P) ???
+    
+    try:
+        Delta = np.linalg.solve(JTJ + Lambda*I, -JT*e)
+    except np.linalg.LinAlgError:
+        print("Matriz singular.")
+        return(-1)
+    
+    
