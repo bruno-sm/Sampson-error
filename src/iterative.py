@@ -101,7 +101,7 @@ RAZONAMIENTO -> pág 601
 
 -----------------------------
 
-CHECA PABLO:
+LM con f como función de Sampson:
 
 P:
     Vector de parámetros de R^N a R^M.
