@@ -6,13 +6,13 @@ import time
 
 
 def main():
-    imgs = [cv2.imread("imagenes/" + name, 1) for name in ["yosemite5.jpg", "yosemite6.jpg", "yosemite7.jpg"]]
+    imgs = [cv2.imread("imagenes/" + name, 1) for name in ["mosaico002.JPG", "mosaico003.JPG", "mosaico004.JPG"]]
 
     # Crea una imagen en negro de tamaño suficiente
     h = int(imgs[0].shape[0] * 3) 
     w = int(imgs[0].shape[1] * 5)
     canvas = np.zeros((w, h, 3), dtype=np.uint8)
-    show_img((stitch_images(imgs, canvas, LM_fSampson), "Mosaico"))
+    show_img((stitch_images(imgs, canvas, find_homography_with_gauss_newton), "Mosaico"))
 
 
 # Une la imágenes en un mosaico y las introduce en el canvas
