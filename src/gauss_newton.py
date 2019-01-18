@@ -9,7 +9,7 @@ def find_homography_with_gauss_newton(pts1, pts2):
     f = lambda P : sampson_error(pts1, pts2, np.reshape(P, (3, 3)))
     P = np.reshape(H, (9, 1))
     ε = np.matrix([f(P)])
-    print("Error: {}".format(ε))
+#    print("Error: {}".format(ε))
 
     Δ = np.zeros((1,1)) + np.inf
     while np.mean(Δ) > 0:
@@ -22,6 +22,6 @@ def find_homography_with_gauss_newton(pts1, pts2):
 
         P = P + Δ
         ε = np.matrix([f(P)]) 
-        print("Error: {}".format(ε))
+#        print("Error: {}".format(ε))
 
-    return np.reshape(P, (3, 3))
+    return np.reshape(P, (3, 3)), ε
