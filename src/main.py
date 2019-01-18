@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from newton import *
+from iterative import *
 
 
 def main():
@@ -54,7 +55,7 @@ def ejercicio3_b(img1, img2):
         match_idx = [(m[0].trainIdx, m[0].queryIdx) for m in matches]
         pts1 = np.float32([kp1[i].pt for (_, i) in match_idx])
         pts2 = np.float32([kp2[i].pt for (i, _) in match_idx])
-        H = find_homography_with_newton(pts1, pts2)
+        H = LM_fSampson(pts1, pts2, 10, 50)
         return H
 
     raise "Ejercicio 3.b: No hay suficientes matches para calcular la homografía"
