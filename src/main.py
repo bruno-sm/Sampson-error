@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from newton import *
+from gauss_newton import *
 
 
 def main():
@@ -11,11 +12,15 @@ def main():
     w = int(imgs[0].shape[1] * 2.3) 
     canvas = np.zeros((w, h, 3), dtype=np.uint8)
 
-    show_img((stitch_images(imgs, canvas), "Mosaico"))
+    show_img((stitch_images(imgs, canvas, find_homography_with_newton), "Mosaico"))
 
 
 # Une la imágenes en un mosaico y las introduce en el canvas
-def stitch_images(imgs, canvas):
+def stitch_images(imgs, canvas, homography_estimator):
+    if len(imgs) == 1:
+        print(imgs[0])
+        return imgs[0]
+
     central_idx = int((len(imgs) - 1)/2)
     canvas_size = canvas.shape[:2]
     # Homografía que centra la imagen central
@@ -30,20 +35,19 @@ def stitch_images(imgs, canvas):
     H = traslation_to_center
     # Calculamos el mosaico desde la imagen central hacia la izquierda
     for i in reversed(range(central_idx)):
-        H = H * ejercicio3_b(imgs[i], imgs[i+1])
+        H = H * ejercicio3_b(imgs[i], imgs[i+1], homography_estimator)
         canvas = cv2.warpPerspective(imgs[i], H, canvas_size, canvas, borderMode=cv2.BORDER_TRANSPARENT)
 
     H = traslation_to_center
     # Calculamos el mosaico desde la imagen central hacia la derecha
     for i in range(central_idx+1, len(imgs)):
-        H = H * ejercicio3_b(imgs[i], imgs[i-1])
+        H = H * ejercicio3_b(imgs[i], imgs[i-1], homography_estimator)
         canvas = cv2.warpPerspective(imgs[i], H, canvas_size, canvas, borderMode=cv2.BORDER_TRANSPARENT)
 
     return canvas
 
 
-## Apartado B
-def ejercicio3_b(img1, img2):
+def ejercicio3_b(img1, img2, homography_estimator):
     # Obtenemos los key points y sus descriptores
     kp1, des1 = sift_kps_and_descriptors(img1)
     kp2, des2 = sift_kps_and_descriptors(img2)
@@ -54,7 +58,7 @@ def ejercicio3_b(img1, img2):
         match_idx = [(m[0].trainIdx, m[0].queryIdx) for m in matches]
         pts1 = np.float32([kp1[i].pt for (_, i) in match_idx])
         pts2 = np.float32([kp2[i].pt for (i, _) in match_idx])
-        H = find_homography_with_newton(pts1, pts2)
+        H = homography_estimator(pts1, pts2)
         return H
 
     raise "Ejercicio 3.b: No hay suficientes matches para calcular la homografía"
