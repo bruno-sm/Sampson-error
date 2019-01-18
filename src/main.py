@@ -7,14 +7,14 @@ import time
 
 
 def main():
-    imgs = [cv2.imread("imagenes/" + name, 1) for name in ["yosemite1.jpg", "yosemite2.jpg", "yosemite3.jpg"]]
+    imgs = [cv2.imread("imagenes/" + name, 1) for name in ["yosemite5.jpg", "yosemite6.jpg", "yosemite7.jpg"]]
 
     # Crea una imagen en negro de tamaño suficiente
-    h = int(imgs[0].shape[0] * 1.5) 
-    w = int(imgs[0].shape[1] * 2.3) 
+    h = int(imgs[0].shape[0] * 1.7) 
+    w = int(imgs[0].shape[1] * 3.5) 
     canvas = np.zeros((w, h, 3), dtype=np.uint8)
 
-    show_img((stitch_images(imgs, canvas, find_homography_with_gauss_newton), "Mosaico"))
+    show_img((stitch_images(imgs, canvas, LM_fSampson), "Mosaico"))
 
 
 # Une la imágenes en un mosaico y las introduce en el canvas
@@ -61,7 +61,7 @@ def ejercicio3_b(img1, img2, homography_estimator):
         pts1 = np.float32([kp1[i].pt for (_, i) in match_idx])
         pts2 = np.float32([kp2[i].pt for (i, _) in match_idx])
         t1 = time.time()
-        H,error = homography_estimator(pts1, pts2)
+        H,error = homography_estimator(pts1, pts2,10,10)
         t2 = time.time()
         print("Error: " + str(np.asarray(error).reshape(-1)[0]))
         print("Tiempo: " + str(t2-t1))
