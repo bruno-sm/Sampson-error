@@ -7,7 +7,6 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon, QPixmap, QImage
 from PyQt5.QtCore import Qt, QSize, pyqtSignal, pyqtSlot, QRectF
-from newton import find_homography_with_newton
 from gauss_newton import find_homography_with_gauss_newton
 from iterative import *
 
@@ -72,10 +71,9 @@ class Window(QMainWindow):
         centralWidget = QWidget(self)          
         self.setCentralWidget(centralWidget)   
 
-        self.algorithm = find_homography_with_newton 
+        self.algorithm = find_homography_with_gauss_newton 
         self.algorithmCombo = QComboBox(self)
         self.algorithmCombo.setObjectName(("algorithmComboBox"))
-        self.algorithmCombo.addItem("Newton")
         self.algorithmCombo.addItem("Gauss-Newton")
         self.algorithmCombo.addItem("LM")
         self.algorithmCombo.activated[str].connect(self.changedAlgorithm)
@@ -110,8 +108,6 @@ class Window(QMainWindow):
 
     @pyqtSlot(str)
     def changedAlgorithm(self, name):
-        if name == "Newton":
-            self.algorithm = find_homography_with_newton 
         elif name == "Gauss-Newton":
             self.algorithm = find_homography_with_gauss_newton 
         elif name == "LM":

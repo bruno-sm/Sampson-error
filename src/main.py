@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-from newton import *
 from gauss_newton import *
 from iterative import *
 import time
@@ -61,9 +60,9 @@ def ejercicio3_b(img1, img2, homography_estimator):
         pts1 = np.float32([kp1[i].pt for (_, i) in match_idx])
         pts2 = np.float32([kp2[i].pt for (i, _) in match_idx])
         t1 = time.time()
-        H,error = homography_estimator(pts1, pts2)
+        H, error = homography_estimator(pts1, pts2)
         t2 = time.time()
-        print("Error: " + str(np.asarray(error).reshape(-1)[0]))
+        print("Error: {}".format(error))
         print("Tiempo: " + str(t2-t1))
         return H
 
