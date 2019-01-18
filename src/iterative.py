@@ -162,7 +162,7 @@ def LM_fSampson(x1,x2,topeIter,topePasosSinIncremento):
                 Lambda = Lambda*10
         iter = iter +1
     
-    return np.reshape(P,(3,3))
+    return (np.reshape(P,(3,3)),e)
 
 """
 # LM con e = función de coste.

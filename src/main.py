@@ -3,6 +3,7 @@ import numpy as np
 from newton import *
 from gauss_newton import *
 from iterative import *
+import time
 
 
 def main():
@@ -13,7 +14,7 @@ def main():
     w = int(imgs[0].shape[1] * 2.3) 
     canvas = np.zeros((w, h, 3), dtype=np.uint8)
 
-    show_img((stitch_images(imgs, canvas, find_homography_with_newton), "Mosaico"))
+    show_img((stitch_images(imgs, canvas, find_homography_with_gauss_newton), "Mosaico"))
 
 
 # Une la imágenes en un mosaico y las introduce en el canvas
@@ -59,7 +60,10 @@ def ejercicio3_b(img1, img2, homography_estimator):
         match_idx = [(m[0].trainIdx, m[0].queryIdx) for m in matches]
         pts1 = np.float32([kp1[i].pt for (_, i) in match_idx])
         pts2 = np.float32([kp2[i].pt for (i, _) in match_idx])
+        t1 = time.time()
         H = homography_estimator(pts1, pts2)
+        t2 = time.time()
+        print("Tiempo: " + str(t2-t1))
         return H
 
     raise "Ejercicio 3.b: No hay suficientes matches para calcular la homografía"
