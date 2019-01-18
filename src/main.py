@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from newton import *
 from gauss_newton import *
+from iterative import *
 
 
 def main():
